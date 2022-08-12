@@ -1,5 +1,6 @@
 package com.sp.store.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -8,14 +9,14 @@ import lombok.Data;
 @TableName("Book")
 @Data
 public class Book {
-    @TableId
-    private String ISBN;
+    @TableId(type = IdType.AUTO)
+    private Integer id;
+    private String isbn;
     private String name;
     private String author;
     private String press;
-    private String classify;
     private String description;
-    private int stock;
-    private int price;//以分为单位
+    private Integer stock;
+    private Integer price;//以分为单位
     private String imageUrl;
 }
