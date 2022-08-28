@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-@TableName("Image")
+@TableName("image")
 @Data
 public class File {
     @TableId(type = IdType.ASSIGN_UUID)

@@ -2,11 +2,14 @@ package com.sp.store.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.math.BigDecimal;
 
-@TableName("Book")
+
+@TableName("book")
 @Data
 public class Book {
     @TableId(type = IdType.AUTO)
@@ -17,6 +20,8 @@ public class Book {
     private String press;
     private String description;
     private Integer stock;
-    private Integer price;//以分为单位
+    private BigDecimal price;
     private String imageUrl;
+    @TableLogic
+    private Integer isDeleted;
 }
