@@ -102,7 +102,7 @@ public class AliPayController {
 
                 // 查询订单
                 QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-                queryWrapper.eq("order_id", outTradeNo);
+                queryWrapper.eq("id", outTradeNo);
                 Order order = orderMapper.selectOne(queryWrapper);
 
                 if (order != null) {

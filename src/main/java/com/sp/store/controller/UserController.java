@@ -37,7 +37,7 @@ public class UserController {
     public Result<?> findPage(@RequestParam(defaultValue = "1") Integer pageNumber, @RequestParam(defaultValue = "10") Integer pageSize, @RequestParam(defaultValue = "") String search) {
         LambdaQueryWrapper<User> wrapper = Wrappers.lambdaQuery();
         if (search != null && search.length() > 0) {
-            wrapper.like(User::getName, search);
+            wrapper.like(User::getNickName, search);
         }
         wrapper.orderByAsc(User::getId);
         Page<User> userPage=userMapper.selectPage(new Page<>(pageNumber, pageSize), wrapper);
