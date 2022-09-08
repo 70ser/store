@@ -5,12 +5,14 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
 
 @TableName("book")
 @Data
+@ToString
 public class Book {
     @TableId(type = IdType.AUTO)
     private Integer id;

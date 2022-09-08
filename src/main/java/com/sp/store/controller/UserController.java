@@ -1,6 +1,7 @@
 package com.sp.store.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sp.store.common.Result;
@@ -18,10 +19,31 @@ public class UserController {
 
     @Resource
     private UserMapper userMapper;
-    @PostMapping
-    public Result<?> save(@RequestBody User user) {
-        userMapper.insert(user);
-        return Result.success();
+    @PostMapping("/register")
+    public Result<?> register (@RequestBody User user) {
+        QueryWrapper<User> queryWrapper=Wrappers.query();
+        queryWrapper.eq("user_name",user.getUserName());
+        User only=userMapper.selectOne(queryWrapper);
+        if(only==null){
+            userMapper.insert(user);
+            return Result.success();
+        }
+        else{
+            return Result.error("-1","用户名已被使用");
+        }
+
+    }
+    @PostMapping("/login")
+    public Result<?> login (@RequestBody User user) {
+        QueryWrapper<User> queryWrapper=Wrappers.query();
+        queryWrapper.eq("user_name",user.getUserName());
+        User only=userMapper.selectOne(queryWrapper);
+        if(only==null||(!only.getPassword().equals(user.getPassword()))){
+            return Result.error("-1","用户名或密码错误");
+        }
+        else{
+            return Result.success(only);
+        }
     }
     @PutMapping
     public Result<?> update(@RequestBody User user) {
