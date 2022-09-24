@@ -44,7 +44,7 @@ public class OrderController {
     public Result<?> findPage(@RequestParam(defaultValue = "1") Integer pageNumber, @RequestParam(defaultValue = "10") Integer pageSize, @RequestParam(defaultValue = "") String search) {
         LambdaQueryWrapper<Order> wrapper = Wrappers.lambdaQuery();
         if (search != null && search.length() > 0) {
-            wrapper.like(Order::getId, search);
+            wrapper.like(Order::getId, search).or().like(Order::getBookId,search).or().like(Order::getUserId,search);
         }
         wrapper.orderByDesc(Order::getCreateTime);
         //wrapper.orderByAsc(Order::getId);
