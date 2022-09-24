@@ -1,6 +1,7 @@
 package com.sp.store.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sp.store.common.Result;
@@ -10,6 +11,7 @@ import com.sp.store.mapper.OrderMapper;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -48,5 +50,13 @@ public class OrderController {
         //wrapper.orderByAsc(Order::getId);
         Page<Order> orderPage=orderMapper.selectPage(new Page<>(pageNumber, pageSize), wrapper);
         return Result.success(orderPage);
+    }
+    @GetMapping("/{id}")
+    public Result<?> myOrder( @PathVariable Integer userId) {
+        QueryWrapper<Order> wrapper=Wrappers.query();
+        wrapper.eq("user_id", userId);
+        wrapper.orderByDesc("create_time");
+        List<Order> list=orderMapper.selectList(wrapper);
+        return Result.success(list);
     }
 }

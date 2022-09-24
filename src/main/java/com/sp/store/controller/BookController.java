@@ -4,6 +4,7 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sp.store.common.Result;
@@ -45,11 +46,16 @@ public class BookController {
         bookService.removeById(id);
         return Result.success();
     }
+    @GetMapping("/{id}")
+    public Result<?> getDetail(@PathVariable Integer id) {
+        return Result.success(bookService.getById(id));
+    }
     @GetMapping
     public Result<?> findPage(@RequestParam(defaultValue = "1") Integer pageNumber, @RequestParam(defaultValue = "10") Integer pageSize, @RequestParam(defaultValue = "") String search) {
         LambdaQueryWrapper<Book> wrapper = Wrappers.lambdaQuery();
         if (search != null && search.length() > 0) {
-            wrapper.like(Book::getName, search);
+            wrapper.like(Book::getName, search).or().like(Book::getAuthor,search).or().like(Book::getPress,search).or().like(Book::getIsbn,search)
+                    .or().eq(Book::getId,search);
         }
         wrapper.orderByAsc(Book::getId);
         Page<Book> bookPage=bookService.page(new Page<>(pageNumber, pageSize), wrapper);
@@ -107,5 +113,20 @@ public class BookController {
         List<Book> books = reader.readAll(Book.class);
         bookService.saveAll(books);
         return Result.success(true);
+    }
+    @GetMapping("/random")
+    public Result<?> random(@RequestParam(defaultValue = "32") Integer size){
+        return Result.success(bookMapper.getRandom(size));
+    }
+    @GetMapping("/search")
+    public Result<?> searchBook( @RequestParam(defaultValue = "") String search) {
+        LambdaQueryWrapper<Book> wrapper = Wrappers.lambdaQuery();
+        if (search != null && search.length() > 0) {
+            wrapper.like(Book::getName, search).or().like(Book::getAuthor,search).or().like(Book::getPress,search).or().like(Book::getIsbn,search)
+                    .or().eq(Book::getId,search);
+        }
+        wrapper.orderByAsc(Book::getId);
+        List<Book> list=bookService.list(wrapper);
+        return Result.success(list);
     }
 }

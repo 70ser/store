@@ -10,7 +10,6 @@ import com.sp.store.mapper.UserMapper;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.sql.Wrapper;
 
 @RestController
 @RequestMapping("/user")
@@ -25,6 +24,7 @@ public class UserController {
         queryWrapper.eq("user_name",user.getUserName());
         User only=userMapper.selectOne(queryWrapper);
         if(only==null){
+            user.setNickName(user.getUserName());//默认昵称为用户名
             userMapper.insert(user);
             return Result.success();
         }
@@ -64,6 +64,12 @@ public class UserController {
         wrapper.orderByAsc(User::getId);
         Page<User> userPage=userMapper.selectPage(new Page<>(pageNumber, pageSize), wrapper);
         return Result.success(userPage);
+    }
+    @GetMapping("/info/{id}")
+    public Result<?> myInfo(@PathVariable Integer id) {
+        if(id==null ) return  Result.error("-1","未登录");
+        User me=userMapper.selectById(id);
+        return Result.success(me);
     }
 }
 
