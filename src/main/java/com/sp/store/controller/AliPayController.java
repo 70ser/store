@@ -1,5 +1,6 @@
 package com.sp.store.controller;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
@@ -49,6 +50,7 @@ public class AliPayController {
         // 2. 创建 Request并设置Request参数
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();  // 发送请求的 Request类
         request.setNotifyUrl(aliPayConfig.getNotifyUrl());
+        request.setReturnUrl(aliPayConfig.getReturnUrl());
         JSONObject bizContent = new JSONObject();
         bizContent.set("out_trade_no", aliPay.getTraceNo());  // 我们自己生成的订单编号
         bizContent.set("total_amount", aliPay.getTotalAmount()); // 订单的总金额
@@ -107,7 +109,8 @@ public class AliPayController {
 
                 if (order != null) {
                     order.setAlipayNo(alipayTradeNo);
-                    order.setPayTime(new Date());
+                    //order.setPayTime(new Date());
+                    order.setPayTime(DateUtil.parse(params.get("gmt_payment")));
                     order.setState((short)2);
                     orderMapper.updateById(order);
                 }
