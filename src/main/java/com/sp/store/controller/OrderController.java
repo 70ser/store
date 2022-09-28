@@ -70,7 +70,7 @@ public class OrderController {
         orderMapper.updateById(order);
         return Result.success();
     }
-    @GetMapping("/{id}")
+    @GetMapping("/myorder/{userId}")
     public Result<?> myOrder( @PathVariable Integer userId) {
         QueryWrapper<Order> wrapper=Wrappers.query();
         wrapper.eq("user_id", userId);
