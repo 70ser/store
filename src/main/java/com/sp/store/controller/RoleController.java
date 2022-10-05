@@ -3,6 +3,7 @@ package com.sp.store.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sp.store.common.Result;
+import com.sp.store.entity.Book;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
@@ -58,11 +59,15 @@ public class RoleController {
     }
 
     @GetMapping("/page")
-    public Result<?> findPage(@RequestParam Integer pageNum,
-                                @RequestParam Integer pageSize) {
+    public Result<?> findPage(@RequestParam(defaultValue = "1") Integer pageNumber,
+                              @RequestParam(defaultValue = "10") Integer pageSize,
+                              @RequestParam(defaultValue = "") String search) {
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
+        if (search != null && search.length() > 0) {
+            queryWrapper.like("name", search).or().like("id",search).or().like("description",search);
+        }
         queryWrapper.orderByDesc("id");
-        return Result.success(roleService.page(new Page<>(pageNum, pageSize), queryWrapper));
+        return Result.success(roleService.page(new Page<>(pageNumber, pageSize), queryWrapper));
     }
 
 }

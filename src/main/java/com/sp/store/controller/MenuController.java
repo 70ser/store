@@ -2,9 +2,12 @@ package com.sp.store.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.sp.store.entity.Role;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sp.store.common.Result;
 
@@ -32,6 +35,7 @@ public class MenuController {
     @PostMapping
     public Result<?> save(@RequestBody Menu menu) {
         menuService.saveOrUpdate(menu);
+        System.out.println("saveorupdate success");
         return Result.success();
     }
 
@@ -48,8 +52,22 @@ public class MenuController {
     }
 
     @GetMapping
-    public Result<?> findAll() {
-        return Result.success(menuService.list());
+    public Result<?> findAll(@RequestParam(defaultValue = "") String search) {
+        QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
+        if (search != null && search.length() > 0) {
+//            queryWrapper.like("name", search).or().like("id",search).or().like("description",search);
+            queryWrapper.like("name", search).or().like("id",search).or().like("description",search);
+        }
+        queryWrapper.orderByAsc("id");
+        List<Menu> list=menuService.list(queryWrapper);
+        //最多只有两级
+        List<Menu> parentNode = list.stream().filter(menu -> menu.getPid() == null).collect(Collectors.toList());
+        for (Menu menu : parentNode) {
+            menu.setChildren(list.stream().filter(m -> menu.getId().equals(m.getPid())).collect(Collectors.toList()));
+
+        }
+        System.out.println("findAll success");
+        return Result.success(parentNode);
     }
 
     @GetMapping("/{id}")
@@ -58,11 +76,16 @@ public class MenuController {
     }
 
     @GetMapping("/page")
-    public Result<?> findPage(@RequestParam Integer pageNum,
-                                @RequestParam Integer pageSize) {
+    public Result<?> findPage(@RequestParam(defaultValue = "1") Integer pageNumber,
+                              @RequestParam(defaultValue = "10") Integer pageSize,
+                              @RequestParam(defaultValue = "") String search) {
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
+        if (search != null && search.length() > 0) {
+//            queryWrapper.like("name", search).or().like("id",search).or().like("description",search);
+            queryWrapper.like("name", search).or().like("id",search).or().like("description",search);
+        }
         queryWrapper.orderByDesc("id");
-        return Result.success(menuService.page(new Page<>(pageNum, pageSize), queryWrapper));
+        return Result.success(menuService.page(new Page<>(pageNumber, pageSize), queryWrapper));
     }
 
 }
